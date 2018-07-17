@@ -40,7 +40,9 @@ RUN apt-get -y update && \
 	make 						                                    \
 	gnupg2                                                                              \
         python                                                                              \
-        vim
+        vim                                                                                 \
+        python-pip                                                                          \
+        python3-pip
 
 USER retdec
 RUN git clone https://github.com/avast-tl/retdec &&                                         \
@@ -66,10 +68,14 @@ RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.s
 
 ENV PATH /home/retdec/retdec-install/bin:/home/retdec/bin:/home/retdec/.nvm/versions/node/v10.5.0/bin/:$PATH
 
+RUN pip install frida frida-tools
+
 RUN r2pm init &&                                                                            \
     r2pm update &&                                                                          \
     r2pm -i r2retdec &&                                                                     \
     echo `which retdec-decompiler.sh` >> ~/.r2retdec &&                                     \
-    r2pm -i r2dec
+    r2pm -i r2dec &&                                                                        \
+    r2pm -i r2msdn &&                                                                       \
+    r2pm -i r2frida
 
 CMD ["/bin/bash"]
