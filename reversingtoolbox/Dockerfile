@@ -42,9 +42,10 @@ RUN apt-get -y update && \
         python                                                                              \
         vim                                                                                 \
         python-pip                                                                          \
-        python3-pip
+        python3-pip                                                                         \
+        gdb
 
-USER retdec
+#USER retdec
 RUN git clone https://github.com/avast-tl/retdec &&                                         \
 	cd retdec &&                                                                        \
 	mkdir build &&                                                                      \
@@ -59,6 +60,10 @@ RUN git clone https://github.com/radare/radare2.git &&                          
 	./sys/user.sh &&                                                                    \
         cd
 
+RUN git clone https://github.com/longld/peda.git ~/peda &&                                  \
+        echo "source ~/peda/peda.py" >> ~/.gdbinit &&                                       \
+        cd
+
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash && \
     export NVM_DIR="$HOME/.nvm" &&                                                          \
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  &&                                    \
@@ -68,7 +73,9 @@ RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.s
 
 ENV PATH /home/retdec/retdec-install/bin:/home/retdec/bin:/home/retdec/.nvm/versions/node/v10.5.0/bin/:$PATH
 
-RUN pip install frida frida-tools
+RUN pip3 install frida frida-tools r2pipe
+
+RUN pip2 install angr termcolor IPython simuvex r2pipe
 
 RUN r2pm init &&                                                                            \
     r2pm update &&                                                                          \
