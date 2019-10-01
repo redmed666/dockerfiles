@@ -108,6 +108,7 @@ RUN chsh -s $(which zsh)
 
 COPY tmux.conf /root/.tmux.conf
 COPY vimrc /root/.vimrc
+COPY radare2rc /root/.radare2rc
 
 ENV HOME /root
 ENV USER root

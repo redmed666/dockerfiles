@@ -1,0 +1,26 @@
+e dbg.bep   = entry
+e cmd.stack = true
+eco solarized
+e scr.utf8 = true
+e prj.git = true
+e scr.rainbow = true
+
+e anal.calls = true
+e anal.refstr = true
+e anal.strings = true
+e anal.brokenrefs = true
+e anal.datarefs = true
+e anal.jmp.cref = true
+e anal.jmp.ref = true
+e anal.jmp.tbl = true
+
+e asm.anal = true
+e asm.lines.call = true
+e asm.middle = true
+e asm.lines.ret = true
+e asm.relsub = true
+e asm.syntax=intel
+e asm.describe = false
+
+# Emulation macro
+(emu_init, ar0, aeim-, aei-, aei, aeim, aeip, aer, e io.pcache = true)
