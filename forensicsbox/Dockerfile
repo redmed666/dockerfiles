@@ -47,6 +47,8 @@ RUN apt install -y \
   cmake \
   bison \
   flex \
+  gcc-multilib \
+  g++-multilib \
   tmux
 
 RUN unlink /usr/bin/volatility && \
@@ -83,24 +85,24 @@ ENV PATH /root/bin:$PATH
 RUN pip3 install frida frida-tools r2pipe
 
 RUN cd /tmp && \
-    git clone https://github.com/longld/peda.git peda &&                                  \
-    echo "source /tmp/peda/peda.py" >> /root/.gdbinit
+  git clone https://github.com/longld/peda.git peda &&                                  \
+  echo "source /tmp/peda/peda.py" >> /root/.gdbinit
 
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash && \
-    export NVM_DIR="$HOME/.nvm" &&                                                          \
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  &&                                    \
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" &&                   \
-    nvm install 10.5.0 && \
-    nvm use node
+  export NVM_DIR="$HOME/.nvm" &&                                                          \
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  &&                                    \
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" &&                   \
+  nvm install 10.5.0 && \
+  nvm use node
 
 ENV PATH=/root/bin:/root/.nvm/versions/node/v10.5.0/bin:$PATH
 
 RUN r2pm init &&                                                                            \
-    r2pm update &&                                                                          \
-    r2pm -i r2msdn &&                                                                       \
-    r2pm -i r2dec &&									    \
-    r2pm -i r2ghidra-dec &&								    \
-    r2pm -i r2frida
+  r2pm update &&                                                                          \
+  r2pm -i r2msdn &&                                                                       \
+  r2pm -i r2dec &&									    \
+  r2pm -i r2ghidra-dec &&								    \
+  r2pm -i r2frida
 
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
