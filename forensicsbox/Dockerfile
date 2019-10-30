@@ -57,7 +57,7 @@ RUN unlink /usr/bin/volatility && \
 # Retrieve remaining dependencies
 RUN cd /tmp && \
   wget -O yara-v3.4.0.tar.gz "https://github.com/plusvic/yara/archive/v3.4.0.tar.gz" && \
-  git clone https://github.com/volatilityfoundation/volatility.git volatility && \
+  git clone https://github.com/volatilityfoundation/volatility3.git volatility && \
   git clone https://github.com/radareorg/radare2.git radare2
 
 RUN  cd /tmp && \
@@ -68,8 +68,8 @@ RUN  cd /tmp && \
   make && \
   make install && \
   cd yara-python/ && \
-  python setup.py build && \
-  python setup.py install
+  python3 setup.py build && \
+  python3 setup.py install
 
 RUN cd /tmp && \
   cd radare2 && \
@@ -79,6 +79,14 @@ RUN mv /tmp/volatility /usr/share/volatility && \
   cd /usr/share/volatility && \
   chmod +x vol.py && \
   ln -fs /usr/share/volatility/vol.py /usr/bin/
+
+RUN cd /usr/share/volatility && \
+  python3 setup.py install
+
+RUN cd /tmp && \
+  curl https://downloads.volatilityfoundation.org/volatility3/symbols/windows.zip --output windows.zip && \
+  unzip windows.zip && \
+  mv windows /usr/share/volatility/volatility/symbols
 
 ENV PATH /root/bin:$PATH
 
@@ -112,6 +120,8 @@ COPY tmux.conf /root/.tmux.conf
 COPY vimrc /root/.vimrc
 COPY radare2rc /root/.radare2rc
 
+RUN mkdir /root/mem
+
 ENV HOME /root
 ENV USER root
-WORKDIR /root/
+WORKDIR /root/mem
