@@ -3,7 +3,8 @@ e cmd.stack = true
 eco solarized
 e scr.utf8 = true
 e prj.git = true
-e scr.rainbow = true
+e graph.offset = true
+e graph.bytes = true
 
 e anal.calls = true
 e anal.refstr = true
