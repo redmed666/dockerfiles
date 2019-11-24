@@ -58,13 +58,15 @@ RUN unlink /usr/bin/volatility && \
 
 # Retrieve remaining dependencies
 RUN cd /tmp && \
-  git clone https://github.com/volatilityfoundation/volatility3.git volatility && \
+  git clone https://github.com/volatilityfoundation/volatility3.git volatility
+
+RUN cd && \
   git clone https://github.com/radareorg/radare2.git radare2 && \
   git clone https://github.com/qilingframework/qiling.git qiling
 
 RUN pip3 install yara-python
 
-RUN cd /tmp && \
+RUN cd && \
   cd radare2 && \
   ./sys/user.sh
 
@@ -76,21 +78,21 @@ RUN mv /tmp/volatility /usr/share/volatility && \
 RUN cd /usr/share/volatility && \
   python3 setup.py install
 
-RUN cd /tmp && \
+RUN cd && \
   curl https://downloads.volatilityfoundation.org/volatility3/symbols/windows.zip --output windows.zip && \
   unzip windows.zip && \
   mv windows /usr/share/volatility/volatility/symbols
 
-RUN cd /tmp && \
+RUN cd && \
   cd qiling && \
   pip3 install -r requirements.txt && \
   python3 setup.py install
 
 RUN pip3 install frida frida-tools r2pipe
 
-RUN cd /tmp && \
+RUN cd && \
   git clone https://github.com/longld/peda.git peda &&                                  \
-  echo "source /tmp/peda/peda.py" >> /root/.gdbinit
+  echo "source /root/peda/peda.py" >> /root/.gdbinit
 
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash && \
   export NVM_DIR="$HOME/.nvm" &&                                                          \
