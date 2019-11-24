@@ -49,6 +49,8 @@ RUN apt install -y \
   flex \
   gcc-multilib \
   g++-multilib \
+  python3-pip \
+  libzip-dev \
   tmux
 
 RUN unlink /usr/bin/volatility && \
@@ -56,20 +58,11 @@ RUN unlink /usr/bin/volatility && \
 
 # Retrieve remaining dependencies
 RUN cd /tmp && \
-  wget -O yara-v3.4.0.tar.gz "https://github.com/plusvic/yara/archive/v3.4.0.tar.gz" && \
   git clone https://github.com/volatilityfoundation/volatility3.git volatility && \
-  git clone https://github.com/radareorg/radare2.git radare2
+  git clone https://github.com/radareorg/radare2.git radare2 && \
+  git clone https://github.com/qilingframework/qiling.git qiling
 
-RUN  cd /tmp && \
-  tar vxzf yara-v3.4.0.tar.gz && \
-  cd yara-3.4.0 && \
-  ./bootstrap.sh && \
-  ./configure && \
-  make && \
-  make install && \
-  cd yara-python/ && \
-  python3 setup.py build && \
-  python3 setup.py install
+RUN pip3 install yara-python
 
 RUN cd /tmp && \
   cd radare2 && \
@@ -88,7 +81,11 @@ RUN cd /tmp && \
   unzip windows.zip && \
   mv windows /usr/share/volatility/volatility/symbols
 
-ENV PATH /root/bin:$PATH
+
+RUN cd /tmp && \
+  cd qiling && \
+  pip3 install -r requirements.txt && \
+  python3 setup.py install
 
 RUN pip3 install frida frida-tools r2pipe
 

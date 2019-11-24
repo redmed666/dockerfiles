@@ -1,6 +1,5 @@
 e dbg.bep   = entry
 e cmd.stack = true
-eco solarized
 e scr.utf8 = true
 e prj.git = true
 e graph.offset = true
