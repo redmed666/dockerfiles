@@ -120,7 +120,7 @@ COPY radare2rc /root/.radare2rc
 
 RUN mkdir /root/mem
 
-RUN cp /usr/local/lib/python3.7/dist-packages/usr/lib/python3/dist-packages/keystone/libkeystone.so /usr/local/lib/python3.7/dist-packages/keystone/
+RUN cp /usr/local/lib/python3.*/dist-packages/usr/lib/python3/dist-packages/keystone/libkeystone.so /usr/local/lib/python3.*/dist-packages/keystone/
 
 ENV HOME /root
 ENV USER root
