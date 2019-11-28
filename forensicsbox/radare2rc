@@ -1,6 +1,9 @@
 e dbg.bep   = entry
 e cmd.stack = true
 e scr.utf8 = true
+e scr.color = 3
+eco default
+# eco rasta # useful when the terminal is solarized light for example
 e prj.git = true
 e graph.offset = true
 e graph.bytes = true
