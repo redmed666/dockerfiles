@@ -17,7 +17,6 @@ RUN apt install -y \
   build-essential \
   sudo \
   git \
-  peframe \
   foremost \
   binutils \
   scalpel \
@@ -69,6 +68,11 @@ RUN pip3 install yara-python
 RUN cd && \
   cd radare2 && \
   ./sys/user.sh
+
+RUN cd && \
+  git clone https://github.com/guelfoweb/peframe.git && \
+  cd peframe && \
+  sudo bash install.sh
 
 RUN mv /tmp/volatility /usr/share/volatility && \ 
   cd /usr/share/volatility && \
