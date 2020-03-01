@@ -190,6 +190,8 @@ COPY tmux.conf /root/.tmux.conf
 COPY vimrc /root/.vimrc
 COPY radare2rc /root/.radare2rc
 
+# Expose 5900 => VNC for PyREBox
+EXPOSE 5900
 RUN mkdir /root/mem
 ENV HOME /root
 ENV USER root
