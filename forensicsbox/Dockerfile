@@ -170,7 +170,7 @@ RUN cd && \
 
 RUN cd && \ 
   cd pyrebox/ && \
-  virtualenv pyrebox3_venv && \
+  virtualenv -p python3 pyrebox3_venv && \
   source pyrebox3_venv/bin/activate && \
   pip3 install -r requirements.txt
 
