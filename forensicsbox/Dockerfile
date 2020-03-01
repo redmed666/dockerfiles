@@ -5,6 +5,9 @@ FROM kalilinux/kali-linux-docker:latest
 ENV http_proxy=$HTTP_PROXY
 ENV https_proxy=$HTTPS_PROXY
 
+###########################
+# Install different stuff #
+###########################
 RUN apt update && \
   apt upgrade -y
 
@@ -30,9 +33,12 @@ RUN apt install -y \
   libreadline-gplv2-dev \
   libtool \
   python2.7 \
+  python3 \
   python-dev \
+  python3-dev \
   python-pillow \
   python-pip \
+  python3-pip \
   tar \
   unzip \
   wget \
@@ -50,29 +56,43 @@ RUN apt install -y \
   g++-multilib \
   python3-pip \
   libzip-dev \
-  tmux
+  tmux \
+  libglib2.0-dev \
+  libboost-all-dev \
+  autoconf \
+  libssl-dev \
+  libpixman-1-dev \
+  libpython-dev \
+  python-capstone \
+  virtualenv \
+  gcc-8 \
+  g++-8
 
-RUN unlink /usr/bin/volatility && \
-  rm -rf /usr/share/volatility
+################################
+# Changes GCC/G++ Version to 8 #
+################################
+# This is for PyREBox otherwise doesn't compile with gcc/g++ 9
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 && \
+  update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 60
 
-# Retrieve remaining dependencies
-RUN cd /tmp && \
-  git clone https://github.com/volatilityfoundation/volatility3.git volatility
-
-RUN cd && \
-  git clone https://github.com/radareorg/radare2.git radare2 && \
-  git clone https://github.com/qilingframework/qiling.git qiling
-
-RUN pip3 install yara-python
-
-RUN cd && \
-  cd radare2 && \
-  ./sys/user.sh
-
+###################
+# Install PEFrame #
+###################
 RUN cd && \
   git clone https://github.com/guelfoweb/peframe.git && \
   cd peframe && \
   sudo bash install.sh
+
+#######################
+# Install Volatility3 #
+#######################
+RUN unlink /usr/bin/volatility && \
+  mv /usr/share/volatility /usr/share/volatility2
+
+RUN cd /tmp && \
+  git clone https://github.com/volatilityfoundation/volatility3.git volatility
+
+RUN pip3 install yara-python
 
 RUN mv /tmp/volatility /usr/share/volatility && \ 
   cd /usr/share/volatility && \
@@ -87,17 +107,20 @@ RUN cd && \
   unzip windows.zip && \
   mv windows /usr/share/volatility/volatility/symbols
 
+###################
+# Install Radare2 #
+###################
 RUN cd && \
-  cd qiling && \
-  pip3 install -r requirements.txt && \
-  python3 setup.py install
+  git clone https://github.com/radareorg/radare2.git
 
+RUN cd && \
+  cd radare2 && \
+  ./sys/user.sh
+
+# Install R2 related stuff
 RUN pip3 install frida frida-tools r2pipe
 
-RUN cd && \
-  git clone https://github.com/longld/peda.git peda &&                                  \
-  echo "source /root/peda/peda.py" >> /root/.gdbinit
-
+# Install node.js => needed for some R2 plugins
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash && \
   export NVM_DIR="$HOME/.nvm" &&                                                          \
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  &&                                    \
@@ -114,18 +137,60 @@ RUN r2pm init &&                                                                
   r2pm -i r2ghidra-dec &&								    \
   r2pm -i r2frida
 
+##################
+# Install Qiling #
+##################
+RUN cd && \
+  git clone https://github.com/qilingframework/qiling.git qiling && \
+  cd qiling && \
+  pip3 install -r requirements.txt && \
+  python3 setup.py install
+
+########################
+# Install peda for gdb #
+########################
+RUN cd && \
+  git clone https://github.com/longld/peda.git peda &&                                  \
+  echo "source /root/peda/peda.py" >> /root/.gdbinit
+
+#####################
+# Install oh-my-zsh #
+#####################
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-
 RUN chsh -s $(which zsh)
+# Dirty hack in order to have access to source...
+RUN mv /bin/sh /bin/sh.bak && \
+  ln -sf /bin/zsh /bin/sh
 
+####################
+# Install PyREBox3 #
+####################
+RUN cd && \
+  git clone --single-branch --branch python3migration https://github.com/Cisco-Talos/pyrebox.git
+
+RUN cd && \ 
+  cd pyrebox/ && \
+  virtualenv pyrebox3_venv && \
+  source pyrebox3_venv/bin/activate && \
+  pip3 install -r requirements.txt
+
+RUN cd && \
+  cd pyrebox/ && \
+  source pyrebox3_venv/bin/activate && \
+  ./build.sh
+
+RUN unlink /bin/sh && \
+  mv /bin/sh.bak /bin/sh
+
+#####################
+# Copy config files #
+#####################
+RUN cp /usr/local/lib/python3.*/dist-packages/usr/lib/python3/dist-packages/keystone/libkeystone.so /usr/local/lib/python3.*/dist-packages/keystone/
 COPY tmux.conf /root/.tmux.conf
 COPY vimrc /root/.vimrc
 COPY radare2rc /root/.radare2rc
 
 RUN mkdir /root/mem
-
-RUN cp /usr/local/lib/python3.*/dist-packages/usr/lib/python3/dist-packages/keystone/libkeystone.so /usr/local/lib/python3.*/dist-packages/keystone/
-
 ENV HOME /root
 ENV USER root
 WORKDIR /root/mem
