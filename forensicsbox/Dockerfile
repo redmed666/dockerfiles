@@ -81,7 +81,8 @@ RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 && \
 RUN cd && \
   git clone https://github.com/guelfoweb/peframe.git && \
   cd peframe && \
-  sudo bash install.sh
+  chmod +x ./install.sh && \
+  ./install.sh
 
 #######################
 # Install Volatility3 #
