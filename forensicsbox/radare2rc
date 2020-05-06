@@ -26,4 +26,4 @@ e asm.syntax=intel
 e asm.describe = false
 
 # Emulation macro
-(emu_init, ar0, aeim-, aei-, aei, aeim, aeip, aer, e io.pcache = true)
+(emu_init; ar0; aeim-; aei-; aei; aeim; aeip; aer; e io.pcache = true)
